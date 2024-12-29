@@ -21,7 +21,7 @@ function BreadcrumbHeader() {
                 </React.Fragment>
             ))}
         </BreadcrumbList>
-      /Breadcrumb>
+      </Breadcrumb>
     </div>
   )
 }
