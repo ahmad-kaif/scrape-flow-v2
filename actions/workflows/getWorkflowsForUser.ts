@@ -8,7 +8,6 @@ export async function getWorkflowsForUser(){
     if(!userId){
         throw new Error("unauthenticated");
     }
-    // throw new Error("unauthenticated");
     return prisma.workflow.findMany({
         where: {
             userId,
