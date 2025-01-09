@@ -23,7 +23,7 @@ import { useMutation } from "@tanstack/react-query";
 import { CreateWorkflow } from "@/actions/workflows/createWorkflow";
 import { toast } from "sonner";
 
-function CreateWorkFlowDialog({ triggerText }: { triggerText: string }) {
+function CreateWorkFlowDialog({ triggerText }: { triggerText?: string }) {
   const [open, setOpen] = useState(false);
 
   const form = useForm<createWorkflowSchemaType>({
@@ -50,7 +50,10 @@ function CreateWorkFlowDialog({ triggerText }: { triggerText: string }) {
   },[mutate])
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(open)=>{
+        form.reset();
+        setOpen(open);
+    }}>
       <DialogTrigger asChild>
         <Button>{triggerText ?? "Create workflow"}</Button>
       </DialogTrigger>
@@ -111,13 +114,14 @@ function CreateWorkFlowDialog({ triggerText }: { triggerText: string }) {
               />
 
               <Button type="submit" className="w-full" disabled={isPending}>
-                {!isPending && "Pending"}
+                {!isPending && "Proceed"}
                 {isPending && <Loader2 className="animate-spin"/>}
               </Button>
             </form>
           </Form>
         </div>
       </DialogContent>
+
     </Dialog>
   );
 }
