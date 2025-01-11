@@ -30,8 +30,13 @@ function DeleteWorkflowDialog({open, setOpen, workflowName,workflowId}: Props) {
 
     const deleteMutation = useMutation({
         mutationFn: DeleteWorkflow,
-        onSuccess: ()=>{},
-        onError: ()=> {},
+        onSuccess: ()=>{
+            toast.success("Workflow deleted succesfully.", {id: workflowId});
+            setConfirmText("");
+        },
+        onError: ()=> {
+            toast.success("Something went wrong.", {id: workflowId})
+        },
     })
 
 
