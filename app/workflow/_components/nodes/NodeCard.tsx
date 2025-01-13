@@ -6,15 +6,16 @@ import React, { ReactNode } from 'react'
 
 function NodeCard({
   children,
-   nodeId,
-    isSelected
+  nodeId,
+  isSelected
   }: {
     nodeId: string;
     children: ReactNode;
     isSelected: boolean;}) {
 
-
   const {getNode,setCenter} = useReactFlow();
+
+
   return (
     <div 
       onDoubleClick={()=> {
