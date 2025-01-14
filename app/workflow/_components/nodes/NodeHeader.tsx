@@ -6,6 +6,7 @@ import { TaskType } from "@/types/task";
 import { CoinsIcon, Ghost, GripVerticalIcon } from "lucide-react";
 import React from "react";
 
+
 function NodeHeader({ taskType }: { taskType: TaskType }) {
   const task = TaskRegistry[taskType];
 
