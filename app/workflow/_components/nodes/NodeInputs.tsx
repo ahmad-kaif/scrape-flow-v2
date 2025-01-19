@@ -25,6 +25,7 @@ export function NodeInput({input, nodeId}: {input: TaskParam, nodeId: string}){
             {!input.hideHandle && (
                 <Handle 
                     id={input.name} 
+                    isConnectable={!isConnected}
                     type="target" 
                     position={Position.Left} 
                     className={cn("bg-muted-foreground !border-2 !border-background !-left-2 !w-4 !h-4",
