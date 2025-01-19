@@ -4,17 +4,9 @@ import { useReactFlow } from '@xyflow/react';
 import React, { ReactNode } from 'react'
 
 
-function NodeCard({
-  children,
-  nodeId,
-  isSelected
-  }: {
-    nodeId: string;
-    children: ReactNode;
-    isSelected: boolean;}) {
+function NodeCard({children,nodeId,isSelected}: {nodeId: string;children: ReactNode;isSelected: boolean;}) {
 
   const {getNode,setCenter} = useReactFlow();
-
 
   return (
     <div 
