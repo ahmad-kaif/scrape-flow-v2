@@ -1,10 +1,22 @@
-import { AppNode } from "@/types/appNode";
+import { AppNode, AppNodeMissingInputs } from "@/types/appNode";
 import { WorkflowExecutionPlan ,WorkflowExecutionPlanPhase,} from "@/types/workflow";
 import { Edge, getIncomers } from "@xyflow/react";
 import { TaskRegistry } from "./task/registry";
+import { error } from "console";
+
+
+export enum FlowToExecutionPlanValidationError{
+  "NO_ENTRY_POINT",
+  "INVALID_INPUTS",
+}
+
 
 type FlowToExecutionPlanType = {
   executionPlan?: WorkflowExecutionPlan;
+  error?: {
+    type: FlowToExecutionPlanValidationError;
+    invalidElements?: AppNodeMissingInputs[];
+  }
 };
 
 export function FlowToExecutionPlan(nodes: AppNode[],edges: Edge[]): FlowToExecutionPlanType {
@@ -12,10 +24,24 @@ export function FlowToExecutionPlan(nodes: AppNode[],edges: Edge[]): FlowToExecu
     (node) => TaskRegistry[node.data.type].isEntryPoint
   );
   if (!entryPoint) {
-    throw new Error("TODO: handle this error");
+    return {
+      error:{
+        type: FlowToExecutionPlanValidationError.NO_ENTRY_POINT,
+      },
+    }
   }
 
+
+  const inputsWithErrors: AppNodeMissingInputs[] = [];
   const planned = new Set<string>();
+
+  const invalidInputs = getInvalidInputs(entryPoint,edges,planned);
+  if(invalidInputs.length > 0){
+    inputsWithErrors.push({
+      nodeId: entryPoint.id,
+      inputs: invalidInputs,
+    });
+  }
 
   const executionPlan: WorkflowExecutionPlan = [
     {
@@ -24,9 +50,11 @@ export function FlowToExecutionPlan(nodes: AppNode[],edges: Edge[]): FlowToExecu
     },
   ];
 
+  planned.add(entryPoint.id);
+
   for (
     let phase = 2;
-    phase <= nodes.length || planned.size < nodes.length;
+    phase <= nodes.length && planned.size < nodes.length;
     phase++
   ) {
     const nextPhase: WorkflowExecutionPlanPhase = { phase, nodes: [] };
@@ -45,7 +73,10 @@ export function FlowToExecutionPlan(nodes: AppNode[],edges: Edge[]): FlowToExecu
           // this means that this particular node has an invalid input
           // which means that the workflow is invalid
           console.error("Invalid inputs", currentNode.id, invalidInputs);
-          throw new Error("TODO : handle error 1");
+          inputsWithErrors.push({
+            nodeId: currentNode.id,
+            inputs: invalidInputs,
+          });
         } else {
           // skip
           continue;
@@ -53,7 +84,19 @@ export function FlowToExecutionPlan(nodes: AppNode[],edges: Edge[]): FlowToExecu
       }
 
       nextPhase.nodes.push(currentNode);
-      planned.add(currentNode.id);
+    }
+    for(const node of nextPhase.nodes){
+        planned.add(node.id);
+    }
+    executionPlan.push(nextPhase);
+  }
+
+  if(inputsWithErrors.length>0){
+    return {
+      error: {
+        type: FlowToExecutionPlanValidationError.INVALID_INPUTS,
+        invalidElements: inputsWithErrors,
+      }
     }
   }
 
