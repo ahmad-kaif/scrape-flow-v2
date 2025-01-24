@@ -12,6 +12,8 @@ import { TaskRegistry } from "./task/registry";
 import { run } from "node:test";
 import { ExecutorRegistry } from "./executor/registry";
 import { Environment, ExecutionEnvironment } from "@/types/executor";
+import { TaskParamType } from "@/types/task";
+import { Browser, Page } from "puppeteer";
 
 export async function ExecuteWorkflow(executionId: string) {
   const execution = await prisma.workflowExecution.findUnique({
@@ -151,6 +153,7 @@ async function executeWorkflowPhase(
     data: {
       status: ExecutionPhaseStatus.RUNNING,
       startedAt,
+      inputs: JSON.stringify(environment.phases[node.id].inputs),
     },
   });
 
@@ -194,11 +197,11 @@ async function executePhase(
     return false;
   }
 
-  const executionEnvironment: ExecutionEnvironment<any> =  createExecutionEnvironment(node,environment);
+  const executionEnvironment: ExecutionEnvironment<any> =
+    createExecutionEnvironment(node, environment);
 
   return await runFn(executionEnvironment);
 }
-
 
 function setupEnvironmentForPhase(node: AppNode, environment: Environment) {
   environment.phases[node.id] = {
@@ -207,22 +210,27 @@ function setupEnvironmentForPhase(node: AppNode, environment: Environment) {
   };
 
   const inputs = TaskRegistry[node.data.type].inputs;
-  for(const input of inputs ){
+  for (const input of inputs) {
+    if (input.type === TaskParamType.BROWSER_INSTANCE) {
+      continue;
+    }
     const inputValue = node.data.inputs[input.name];
-    if(inputValue){
+    if (inputValue) {
       environment.phases[node.id].inputs[input.name] = inputValue;
       continue;
     }
 
     // Get input value from outputs in the environment
-
   }
 }
 
-
-function createExecutionEnvironment(node: AppNode, environment: Environment){
+function createExecutionEnvironment(node: AppNode, environment: Environment): ExecutionEnvironment<any> {
   return {
-    getInput: (name: string) =>  environment.phases[node.id]?.inputs[name],
+    getInput: (name: string) => environment.phases[node.id]?.inputs[name],
+    getBrowser: () => environment.browser,
+    setBrowser: (browser: Browser) => (environment.browser = browser),
 
-  }
+    getPage: ()=> environment.page,
+    setPage: (page: Page) => (environment.page = page),
+  };
 }
