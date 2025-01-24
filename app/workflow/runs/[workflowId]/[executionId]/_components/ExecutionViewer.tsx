@@ -23,10 +23,11 @@ import {
 import React, { ReactNode, useState } from "react";
 
 type ExecutionData = Awaited<ReturnType<typeof GetWorkflowExecutionWithPhases>>;
+
+
 const ExecutionViewer = ({ initialData }: { initialData: ExecutionData }) => {
-
+  
   const [selectedPhase, setSelectedPhase] = useState<string | null>(null);
-
 
   const query = useQuery({
     queryKey: ["execution", initialData?.id],
@@ -40,8 +41,7 @@ const ExecutionViewer = ({ initialData }: { initialData: ExecutionData }) => {
     queryKey: ["phaseDetails", selectedPhase],
     enabled: selectedPhase !== null,
     queryFn: () => GetWorkflowPhaseDetails(selectedPhase!),
-    
-  })
+  });
 
   const isRunning = query.data?.status === WorkflowExecutionStatus.RUNNING;
 
@@ -50,7 +50,7 @@ const ExecutionViewer = ({ initialData }: { initialData: ExecutionData }) => {
     query.data?.startedAt
   );
 
-  const creditsConsumed = GetPhasesTotalCost(query.data?.phases || [])
+  const creditsConsumed = GetPhasesTotalCost(query.data?.phases || []);
 
   return (
     <div className="flex w-full h-full">
@@ -104,10 +104,10 @@ const ExecutionViewer = ({ initialData }: { initialData: ExecutionData }) => {
             <Button
               key={phase.id}
               className="w-full justify-between"
-              variant={ selectedPhase === phase.id ? "secondary" : "ghost"}
-              onClick={()=>{
-                if(isRunning) return;
-                setSelectedPhase(phase.id)
+              variant={selectedPhase === phase.id ? "secondary" : "ghost"}
+              onClick={() => {
+                if (isRunning) return;
+                setSelectedPhase(phase.id);
               }}
             >
               <div className="flex items-center gap-2">
@@ -120,9 +120,7 @@ const ExecutionViewer = ({ initialData }: { initialData: ExecutionData }) => {
         </div>
       </aside>
       <div className="flex w-full h-full">
-        <pre>
-          {JSON.stringify(phaseDetails.data, null, 4)}
-        </pre>
+        <pre>{JSON.stringify(phaseDetails.data, null, 4)}</pre>
       </div>
     </div>
   );
