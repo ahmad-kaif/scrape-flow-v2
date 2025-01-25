@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { timeStamp } from "console";
 
 export async function GetWorkflowPhaseDetails(phaseId: string) {
   const { userId } = auth();
@@ -16,5 +17,13 @@ export async function GetWorkflowPhaseDetails(phaseId: string) {
         userId,
       },
     },
+
+    include: {
+      logs: {
+        orderBy: {
+          timestamp: "asc",
+        }
+      }
+    }
   });
 }
