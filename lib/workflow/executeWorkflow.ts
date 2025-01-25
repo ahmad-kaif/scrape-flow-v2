@@ -225,7 +225,6 @@ async function executePhase(
   if (!runFn) {
     return false;
   }
-  await waitFor(3000); //todo remove it later
 
   const executionEnvironment: ExecutionEnvironment<any> =
     createExecutionEnvironment(node, environment, logCollector);
