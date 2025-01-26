@@ -16,8 +16,11 @@ model Workflow {
   name        String
   description String
 
-  definition String
-  status     String // draft || public
+  definition    String
+  executionPlan String?
+  creditsCost   Int     @default(0)
+
+  status String // draft || public
 
   lastRunAt     DateTime?
   lastRunId     String?
@@ -49,24 +52,23 @@ model WorkflowExecution {
 }
 
 model ExecutionPhase {
-  id                String   @id @default(cuid())
-  userId            String
-  status            String
-  number            Int
-  node              String
-  name              String
-  startedAt         DateTime?
-  completedAt       DateTime?
-  inputs            String?
-  outputs           String?
-  creditsConsumed   Int?
-  workflowExecutionId String 
+  id                  String    @id @default(cuid())
+  userId              String
+  status              String
+  number              Int
+  node                String
+  name                String
+  startedAt           DateTime?
+  completedAt         DateTime?
+  inputs              String?
+  outputs             String?
+  creditsConsumed     Int?
+  workflowExecutionId String
 
   execution WorkflowExecution @relation(fields: [workflowExecutionId], references: [id], onDelete: Cascade)
 
   logs ExecutionLog[]
 }
-
 
 model ExecutionLog {
   id        String   @id @default(cuid())
