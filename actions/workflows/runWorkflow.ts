@@ -1,5 +1,4 @@
 "use server";
-
 import prisma from "@/lib/prisma";
 import { ExecuteWorkflow } from "@/lib/workflow/executeWorkflow";
 import { FlowToExecutionPlan } from "@/lib/workflow/executionPlan";
@@ -14,11 +13,12 @@ import {
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
+
 export async function RunWorkflow(form: {
   workflowId: string;
   flowDefinition?: string;
 }) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) {
     throw new Error("unauthenticated");
   }
@@ -40,11 +40,14 @@ export async function RunWorkflow(form: {
   }
 
   let executionPlan: WorkflowExecutionPlan;
+  let workflowDefinition = flowDefinition;
+
   if (workflow.status === WorkflowStatus.PUBLISHED) {
     if (!workflow.executionPlan) {
       throw new Error("no execution plan found in published workflow");
     }
     executionPlan = JSON.parse(workflow.executionPlan);
+    workflowDefinition = workflow.definition;
   } else {
     //workflow is draft
     if (!flowDefinition) {
@@ -79,7 +82,7 @@ export async function RunWorkflow(form: {
       status: WorkflowExecutionStatus.PENDING,
       startedAt: new Date(),
       trigger: WorkflowExecutionTrigger.MANUAL,
-      definition: flowDefinition,
+      definition: workflowDefinition,
       phases: {
         create: executionPlan.flatMap((phase) => {
           return phase.nodes.flatMap((node) => {
