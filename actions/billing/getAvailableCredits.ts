@@ -5,7 +5,7 @@ import { auth } from "@clerk/nextjs/server"
 
 
 export async function GetAvailableCredits(){
-    const {userId} = auth();
+    const {userId} =  auth();
     if(!userId){
         throw new Error("unauthenticated");
     }
@@ -20,6 +20,5 @@ export async function GetAvailableCredits(){
     }
 
     return balance.credits;
-
 
 }
