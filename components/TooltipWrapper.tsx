@@ -14,6 +14,10 @@ interface Props {
 }
 
 function TooltipWrapper(props: Props) {
+  if (!props.content){
+    console.log('heloooo')
+    return props.children;
+  }
   return (
     <div>
       <TooltipProvider delayDuration={0}>

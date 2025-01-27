@@ -233,6 +233,7 @@ async function executePhase(
 ): Promise<boolean> {
   const runFn = ExecutorRegistry[node.data.type];
   if (!runFn) {
+    logCollector.error(`not found executor for ${node.data.type}`)
     return false;
   }
 
