@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "typeRoots": ["node_modules/@types", "types"],
+    "types": ["next"],
     "lib": [
       "dom",
       "dom.iterable",
