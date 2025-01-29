@@ -11,16 +11,13 @@ import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
 import CreditUsageChart from "../billing/_components/CreditUsageChart";
 
-type PageProps = {
-  searchParams: { [key: string]: string | string[] | undefined };
-  // ... other props
-};
+
 
 const HomePage = ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
-})  => {
+  searchParams: Record<string, string | string[] | undefined>;
+} )  => {
   const currentDate = new Date();
   const month = typeof searchParams.month === "string" ? searchParams.month : undefined;
   const year = typeof searchParams.year === "string" ? searchParams.year : undefined;
