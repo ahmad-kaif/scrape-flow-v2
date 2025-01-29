@@ -1,9 +1,10 @@
+// types/next.d.ts
 import "next";
 
 declare module "next" {
-  // Nuclear override for PageProps
-  type PageProps<T = any> = {
-    params?: T;
-    searchParams?: { [key: string]: string | string[] | undefined };
+  // Completely override PageProps type
+  type PageProps = {
+    params?: Record<string, string | string[]>;
+    searchParams?: Record<string, string | string[] | undefined>;
   };
 }
