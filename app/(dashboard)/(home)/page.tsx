@@ -11,42 +11,37 @@ import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
 import CreditUsageChart from "../billing/_components/CreditUsageChart";
 
+const HomePage = ({}: {}) => {
+  // const currentDate = new Date();
+  // const month = typeof searchParams.month === "string" ? searchParams.month : undefined;
+  // const year = typeof searchParams.year === "string" ? searchParams.year : undefined;
 
-
-const HomePage = ({
-  searchParams,
-}: {
-  searchParams: Record<string, string | string[] | undefined>;
-} )  => {
-  const currentDate = new Date();
-  const month = typeof searchParams.month === "string" ? searchParams.month : undefined;
-  const year = typeof searchParams.year === "string" ? searchParams.year : undefined;
-
-  const period: Period = {
-    month: month ? parseInt(month) : currentDate.getMonth(),
-    year: year ? parseInt(year) : currentDate.getFullYear(),
-  };
+  // const period: Period = {
+  //   month: month ? parseInt(month) : currentDate.getMonth(),
+  //   year: year ? parseInt(year) : currentDate.getFullYear(),
+  // };
 
   return (
-    <div className="flex flex-1 flex-col h-full">
-      <div className="flex justify-between">
-        <h1 className="text-3xl font-bold">Home</h1>
-        <Suspense fallback={<Skeleton className="w-[180px] h-[40px]" />}>
-          <PeriodSelectorWrapper selectedPeriod={period} />
-        </Suspense>
-      </div>
-      <div className="h-full py-6 flex flex-col gap-4">
-        <Suspense fallback={<StatsCardSkeleton />}>
-          <StatsCards selectedPeriod={period} />
-        </Suspense>
-        <Suspense fallback={<Skeleton className="w-full h-[300px]" />}>
-          <StatsExecutionStatus selectedPeriod={period} />
-        </Suspense>
-        <Suspense fallback={<Skeleton className="w-full h-[300px]" />}>
-          <CreditsUsageInPeriod selectedPeriod={period} />
-        </Suspense>
-      </div>
-    </div>
+    <div>HElooooo</div>
+    // <div className="flex flex-1 flex-col h-full">
+    //   <div className="flex justify-between">
+    //     <h1 className="text-3xl font-bold">Home</h1>
+    //     <Suspense fallback={<Skeleton className="w-[180px] h-[40px]" />}>
+    //       <PeriodSelectorWrapper selectedPeriod={period} />
+    //     </Suspense>
+    //   </div>
+    //   <div className="h-full py-6 flex flex-col gap-4">
+    //     <Suspense fallback={<StatsCardSkeleton />}>
+    //       <StatsCards selectedPeriod={period} />
+    //     </Suspense>
+    //     <Suspense fallback={<Skeleton className="w-full h-[300px]" />}>
+    //       <StatsExecutionStatus selectedPeriod={period} />
+    //     </Suspense>
+    //     <Suspense fallback={<Skeleton className="w-full h-[300px]" />}>
+    //       <CreditsUsageInPeriod selectedPeriod={period} />
+    //     </Suspense>
+    //   </div>
+    // </div>
   );
 };
 
@@ -92,24 +87,29 @@ function StatsCardSkeleton() {
   );
 }
 
-
 async function StatsExecutionStatus({
-  selectedPeriod
-}:{
-  selectedPeriod: Period
-}){
+  selectedPeriod,
+}: {
+  selectedPeriod: Period;
+}) {
   const data = await GetWorkflowExecutionStats(selectedPeriod);
 
-  return <ExecutionStatusChart data={data}/>
+  return <ExecutionStatusChart data={data} />;
 }
 async function CreditsUsageInPeriod({
-  selectedPeriod
-}:{
-  selectedPeriod: Period
-}){
+  selectedPeriod,
+}: {
+  selectedPeriod: Period;
+}) {
   const data = await GetCreditUsageInPeriod(selectedPeriod);
 
-  return <CreditUsageChart data={data} title="Daily credits spent" description="Daily credit consumed in selected period"/>
+  return (
+    <CreditUsageChart
+      data={data}
+      title="Daily credits spent"
+      description="Daily credit consumed in selected period"
+    />
+  );
 }
 
 export default HomePage;
