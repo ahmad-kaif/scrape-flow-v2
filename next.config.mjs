@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-nextConfig = {
+const nextConfig = {
     typescript: {
       ignoreBuildErrors: true,
     },
