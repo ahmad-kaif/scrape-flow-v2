@@ -3,6 +3,13 @@ import React, { Suspense } from "react";
 import PeriodSelector from "./_components/PeriodSelector";
 import { Period } from "@/types/analytics";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GetStatsCardsValues } from "@/actions/analytics/getStatsCardsValues";
+import { CirclePlayIcon, CoinsIcon, WaypointsIcon } from "lucide-react";
+import StatsCard from "./_components/StatsCard";
+import { GetWorkflowExecutionStats } from "@/actions/analytics/getWorkflowExecutionStats";
+import ExecutionStatusChart from "./_components/ExecutionStatusChart";
+import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
+import CreditUsageChart from "../billing/_components/CreditUsageChart";
 
 const HomePage = ({
   searchParams,
@@ -27,7 +34,17 @@ const HomePage = ({
           <PeriodSelectorWrapper selectedPeriod={period} />
         </Suspense>
       </div>
-      Stats
+      <div className="h-full py-6 flex flex-col gap-4">
+        <Suspense fallback={<StatsCardSkeleton />}>
+          <StatsCards selectedPeriod={period} />
+        </Suspense>
+        <Suspense fallback={<Skeleton className="w-full h-[300px]" />}>
+          <StatsExecutionStatus selectedPeriod={period} />
+        </Suspense>
+        <Suspense fallback={<Skeleton className="w-full h-[300px]" />}>
+          <CreditsUsageInPeriod selectedPeriod={period} />
+        </Suspense>
+      </div>
     </div>
   );
 };
@@ -39,6 +56,59 @@ async function PeriodSelectorWrapper({
 }) {
   const periods = await GetPeriods();
   return <PeriodSelector selectedPeriod={selectedPeriod} periods={periods} />;
+}
+
+async function StatsCards({ selectedPeriod }: { selectedPeriod: Period }) {
+  const data = await GetStatsCardsValues(selectedPeriod);
+  return (
+    <div className="grid gap-3 lg:gap-8 lg:grid-cols-3 min-h-[120px]">
+      <StatsCard
+        title="Workflow execution"
+        value={data.workflowExecutions}
+        icon={CirclePlayIcon}
+      />
+      <StatsCard
+        title="Phase execution"
+        value={data.phaseExecutions}
+        icon={WaypointsIcon}
+      />
+      <StatsCard
+        title="Credits Consumed"
+        value={data.creditsConsumed}
+        icon={CoinsIcon}
+      />
+    </div>
+  );
+}
+
+function StatsCardSkeleton() {
+  return (
+    <div className="grid gap-3 lg:gap-8 lg:grid-cols-3">
+      {[1, 2, 3].map((i) => (
+        <Skeleton key={i} className="w-full min-h-[120px]" />
+      ))}
+    </div>
+  );
+}
+
+
+async function StatsExecutionStatus({
+  selectedPeriod
+}:{
+  selectedPeriod: Period
+}){
+  const data = await GetWorkflowExecutionStats(selectedPeriod);
+
+  return <ExecutionStatusChart data={data}/>
+}
+async function CreditsUsageInPeriod({
+  selectedPeriod
+}:{
+  selectedPeriod: Period
+}){
+  const data = await GetCreditUsageInPeriod(selectedPeriod);
+
+  return <CreditUsageChart data={data} title="Daily credits spent" description="Daily credit consumed in selected period"/>
 }
 
 export default HomePage;
