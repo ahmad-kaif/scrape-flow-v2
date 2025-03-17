@@ -12,16 +12,18 @@ import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
 import CreditUsageChart from "../billing/_components/CreditUsageChart";
 
-// Define the props type
+// Define the props type compatible with Next.js 15 Server Components
 type PageProps = {
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>; // Updated to Promise
 };
 
-// Use NextPage to type the component
-const HomePage: NextPage<PageProps> = ({ searchParams }) => {
+// Use NextPage to type the component (though optional with Server Components)
+const HomePage: NextPage<PageProps> = async ({ searchParams }) => {
+  // Await searchParams since it's a Promise
+  const resolvedSearchParams = await searchParams;
   const currentDate = new Date();
-  const month = typeof searchParams.month === "string" ? searchParams.month : undefined;
-  const year = typeof searchParams.year === "string" ? searchParams.year : undefined;
+  const month = typeof resolvedSearchParams.month === "string" ? resolvedSearchParams.month : undefined;
+  const year = typeof resolvedSearchParams.year === "string" ? resolvedSearchParams.year : undefined;
 
   const period: Period = {
     month: month ? parseInt(month) : currentDate.getMonth(),
