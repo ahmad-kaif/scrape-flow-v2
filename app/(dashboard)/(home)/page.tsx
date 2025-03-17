@@ -1,3 +1,4 @@
+import { type NextPage } from "next"; // Import NextPage
 import { GetPeriods } from "@/actions/analytics/getPeriods";
 import React, { Suspense } from "react";
 import PeriodSelector from "./_components/PeriodSelector";
@@ -11,13 +12,13 @@ import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
 import CreditUsageChart from "../billing/_components/CreditUsageChart";
 
-
-
-const HomePage = ({
-  searchParams,
-}: {
+// Define the props type
+type PageProps = {
   searchParams: Record<string, string | string[] | undefined>;
-} )  => {
+};
+
+// Use NextPage to type the component
+const HomePage: NextPage<PageProps> = ({ searchParams }) => {
   const currentDate = new Date();
   const month = typeof searchParams.month === "string" ? searchParams.month : undefined;
   const year = typeof searchParams.year === "string" ? searchParams.year : undefined;
@@ -50,6 +51,7 @@ const HomePage = ({
   );
 };
 
+// Rest of the code remains unchanged
 async function PeriodSelectorWrapper({
   selectedPeriod,
 }: {
@@ -92,24 +94,28 @@ function StatsCardSkeleton() {
   );
 }
 
-
 async function StatsExecutionStatus({
-  selectedPeriod
-}:{
-  selectedPeriod: Period
-}){
+  selectedPeriod,
+}: {
+  selectedPeriod: Period;
+}) {
   const data = await GetWorkflowExecutionStats(selectedPeriod);
-
-  return <ExecutionStatusChart data={data}/>
+  return <ExecutionStatusChart data={data} />;
 }
-async function CreditsUsageInPeriod({
-  selectedPeriod
-}:{
-  selectedPeriod: Period
-}){
-  const data = await GetCreditUsageInPeriod(selectedPeriod);
 
-  return <CreditUsageChart data={data} title="Daily credits spent" description="Daily credit consumed in selected period"/>
+async function CreditsUsageInPeriod({
+  selectedPeriod,
+}: {
+  selectedPeriod: Period;
+}) {
+  const data = await GetCreditUsageInPeriod(selectedPeriod);
+  return (
+    <CreditUsageChart
+      data={data}
+      title="Daily credits spent"
+      description="Daily credit consumed in selected period"
+    />
+  );
 }
 
 export default HomePage;

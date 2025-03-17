@@ -1,12 +1,8 @@
 {
   "compilerOptions": {
     "typeRoots": ["node_modules/@types", "types"],
-    "types": ["next"],
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    // Remove "types": ["next"] to allow all ambient types
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -24,20 +20,17 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     },
-    "target": "ES2017"
+    "target": "esnext", // Update to "esnext" for modern JS features (Next.js default)
+    "forceConsistentCasingInFileNames": true // Add for consistency across platforms
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "types",
+    "types"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
